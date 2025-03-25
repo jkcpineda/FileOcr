@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices((_, services) =>
             {
-                var tesseractDataPath = @"C:\Users\judit\Downloads\tessdata-main\tessdata-main";
+                var tesseractDataPath = @".\tessdata";
                 services.AddSingleton(tesseractDataPath);
 
                 services.AddScoped<IPdfOcrProcessor>(provider => new PdfOcrProcessor(provider.GetRequiredService<string>()));

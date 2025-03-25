@@ -13,4 +13,16 @@
     <PackageReference Include="TesseractOCR" Version="5.4.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="tessdata-main\eng.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tessdata\.gitmodules">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
