@@ -2,19 +2,24 @@
 using Microsoft.Extensions.DependencyInjection;
 using Ocr;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 using var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices((_, services) =>
+            .ConfigureAppConfiguration((context, config) =>
             {
-                var tesseractDataPath = @".\tessdata";
-                services.AddSingleton(tesseractDataPath);
+                // Ensure appsettings.json is loaded
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            })
 
+            .ConfigureServices((context, services) =>
+            {
+                var tesseractDataPath = context.Configuration["TesseractDataPath"] ?? string.Empty;
+
+                services.AddSingleton(tesseractDataPath);
                 services.AddScoped<IPdfOcrProcessor>(provider => new PdfOcrProcessor(provider.GetRequiredService<string>()));
-                services.AddScoped<IImageOcrProcessor>(provider => new ImageOcrProcessor(provider.GetRequiredService<string>()));
-                services.AddScoped(provider => new OcrProcessor(
-                    provider.GetRequiredService<IPdfOcrProcessor>(),
-                    provider.GetRequiredService<IImageOcrProcessor>()
-                ));
+
+                services.AddScoped<IImageOcrProcessor>(provider => new ImageOcrProcessor(tesseractDataPath));
+                services.AddScoped<OcrProcessor>();
             })
             .Build();
 
