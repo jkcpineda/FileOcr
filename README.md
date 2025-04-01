@@ -31,7 +31,8 @@ Before running the application, ensure the following dependencies are installed:
    ```json
    {
      "TesseractDataPath": "C:/Users/yourusername/source/repos/FileOcr/bin/Debug/net8.0/tessdata",
-     "WorkingDirectory": "C:/temp"
+     "WorkingDirectory": "C:/temp",
+     "FileLengthLimit": 1000000
    }
    ```
 4. Build and run:
