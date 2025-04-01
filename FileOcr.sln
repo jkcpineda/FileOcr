@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ocr", "Ocr\Ocr.csproj", "{37B20AAB-293C-4C78-A300-E8C646B810D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileOcrApi", "FileOcrApi\FileOcrApi.csproj", "{64EFBA30-66D7-4721-9F77-AB20CD7B662E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileOcrTest", "FileOcrTest\FileOcrTest.csproj", "{2AE03A08-DB71-45F5-995B-62216EFE7D6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{37B20AAB-293C-4C78-A300-E8C646B810D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37B20AAB-293C-4C78-A300-E8C646B810D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37B20AAB-293C-4C78-A300-E8C646B810D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64EFBA30-66D7-4721-9F77-AB20CD7B662E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64EFBA30-66D7-4721-9F77-AB20CD7B662E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64EFBA30-66D7-4721-9F77-AB20CD7B662E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64EFBA30-66D7-4721-9F77-AB20CD7B662E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AE03A08-DB71-45F5-995B-62216EFE7D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AE03A08-DB71-45F5-995B-62216EFE7D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AE03A08-DB71-45F5-995B-62216EFE7D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AE03A08-DB71-45F5-995B-62216EFE7D6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

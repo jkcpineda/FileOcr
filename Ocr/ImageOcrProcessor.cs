@@ -1,31 +1,51 @@
-﻿using Tesseract;
+﻿using Microsoft.Extensions.Options;
+using Tesseract;
 
 namespace Ocr
 {
-    public interface IImageOcrProcessor : IOcr { }
-    public class ImageOcrProcessor : IImageOcrProcessor
+    public class ImageOcrProcessor : IOcr
     {
         public string TesseractDataPath { get; set; }
+        public string WorkingDirectory { get; set; }
 
-        public ImageOcrProcessor(string tesseractDataPath)
+        public ImageOcrProcessor(IOptions<OcrOptions> settings)
         {
-            this.TesseractDataPath = tesseractDataPath;
+            TesseractDataPath = settings.Value.TesseractDataPath;
+            WorkingDirectory = settings.Value.WorkingDirectory;
         }
 
-        public string ProcessOcr(string filename)
+        public async Task<string> ProcessOcr(string filename, byte[] file)
         {
-            using (TesseractEngine engine = new TesseractEngine(TesseractDataPath, "eng"))
-            using (var image = Pix.LoadFromFile(filename))
-            using (var page = engine.Process(image))
+            var fullPath = Path.Combine(WorkingDirectory, filename);
+            await File.WriteAllBytesAsync(fullPath, file);
+
+            return await ExtractTextFromImage(filename);
+        }
+
+        public async Task<string> ProcessOcr(string filename)
+        {
+            return await ExtractTextFromImage(filename);
+        }
+
+        private async Task<string> ExtractTextFromImage(string filename)
+        {
+            return await Task.Run(() =>
             {
-                var txtPath = $"{filename}.txt";
-                FileUtility.TryDelete(txtPath);
+                var fullPath = Path.Combine(WorkingDirectory, filename);
 
-                var ocrContent = page.GetText();
-                File.WriteAllText(txtPath, ocrContent);
+                using (TesseractEngine engine = new TesseractEngine(TesseractDataPath, "eng"))
+                using (var image = Pix.LoadFromFile(fullPath))
+                using (var page = engine.Process(image))
+                {
+                    var txtPath = $"{fullPath}.txt";
+                    FileUtility.TryDelete(txtPath);
 
-                return ocrContent;
-            }
+                    var ocrContent = page.GetText();
+                    File.WriteAllText(txtPath, ocrContent);
+
+                    return ocrContent;
+                }
+            });
         }
     }
 }

@@ -3,6 +3,9 @@
     public interface IOcr
     {
         public string TesseractDataPath { get; set; }
-        string ProcessOcr(string filename);
+
+        public string WorkingDirectory { get; set; }
+        Task<string> ProcessOcr(string filename);
+        Task<string> ProcessOcr(string filename, byte[] file);
     }
 }

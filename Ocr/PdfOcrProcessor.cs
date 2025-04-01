@@ -1,53 +1,70 @@
-﻿using System.Text;
+﻿using Microsoft.Extensions.Options;
+using System.Text;
 using Tesseract;
 
 namespace Ocr
 {
-    public interface IPdfOcrProcessor : IOcr { }
-    public class PdfOcrProcessor : IPdfOcrProcessor
+    public class PdfOcrProcessor : IOcr
     {
         public string TesseractDataPath { get; set; }
 
-        public PdfOcrProcessor(string tesseractDataPath)
+        public string WorkingDirectory { get; set; }
+
+        public PdfOcrProcessor(IOptions<OcrOptions> settings)
         {
-            this.TesseractDataPath = tesseractDataPath;
+            TesseractDataPath = settings.Value.TesseractDataPath;
+            WorkingDirectory = settings.Value.WorkingDirectory;
         }
-        
-        public string ProcessOcr(string filename)
+
+        public async Task<string> ProcessOcr(string filename, byte[] file)
         {
-            var tiffFile = PdfConverter.MakeTiff(filename);
-            var outputFile = DoOcr(tiffFile);
+            var fullPath = Path.Combine(WorkingDirectory, filename);
+            await File.WriteAllBytesAsync(fullPath, file);
+
+            var tiffFile = await PdfConverter.MakeTiff(fullPath);
+            var outputFile = await DoOcr(tiffFile);
 
             return outputFile;
         }
 
-        private string DoOcr(string filename)
+        public async Task<string> ProcessOcr(string filename)
         {
-            var tiffBytes = File.ReadAllBytes(filename);
-            var extractedText = new StringBuilder();
+            var tiffFile = await PdfConverter.MakeTiff(filename);
+            var outputFile = await DoOcr(tiffFile);
 
-            using (TesseractEngine engine = new TesseractEngine(TesseractDataPath, "eng"))
+            return outputFile;
+        }
+
+        private async Task<string> DoOcr(string filename)
+        {
+            return await Task.Run(() =>
             {
-                using (PixArray pages = PixArray.LoadMultiPageTiffFromFile(filename))
+                var tiffBytes = File.ReadAllBytes(filename);
+                var extractedText = new StringBuilder();
+
+                using (TesseractEngine engine = new TesseractEngine(TesseractDataPath, "eng"))
                 {
-                    foreach (Pix p in pages)
+                    using (PixArray pages = PixArray.LoadMultiPageTiffFromFile(filename))
                     {
-                        using (Page page = engine.Process(p))
+                        foreach (Pix p in pages)
                         {
-                            var text = page.GetText();
-                            extractedText.Append(text);
+                            using (Page page = engine.Process(p))
+                            {
+                                var text = page.GetText();
+                                extractedText.Append(text);
+                            }
                         }
                     }
                 }
-            }
 
-            var txtPath = $"{filename}.txt";
-            FileUtility.TryDelete(txtPath);
+                var txtPath = $"{filename}.txt";
+                FileUtility.TryDelete(txtPath);
 
-            var ocrContent = extractedText.ToString();
-            File.WriteAllText(txtPath, ocrContent);
+                var ocrContent = extractedText.ToString();
+                File.WriteAllText(txtPath, ocrContent);
 
-            return ocrContent;
+                return ocrContent;
+            });
         }
     }
 }

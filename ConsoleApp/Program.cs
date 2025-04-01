@@ -1,33 +1,26 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Microsoft.Extensions.DependencyInjection;
-using Ocr;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿//// See https://aka.ms/new-console-template for more information
 
-using var host = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, config) =>
-            {
-                // Ensure appsettings.json is loaded
-                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            })
+using System.Text;
+using System.Text.Json;
 
-            .ConfigureServices((context, services) =>
-            {
-                var tesseractDataPath = context.Configuration["TesseractDataPath"] ?? string.Empty;
+var client = new HttpClient();
 
-                services.AddSingleton(tesseractDataPath);
-                services.AddScoped<IPdfOcrProcessor>(provider => new PdfOcrProcessor(provider.GetRequiredService<string>()));
+var jsonContentPdf = new StringContent(
+    JsonSerializer.Serialize(new
+    {
+        filename = $"{Guid.NewGuid()}.pdf",
+        file = Convert.ToBase64String(File.ReadAllBytes(@"C:\temp\Lorem Ipsum.pdf"))
+    }), Encoding.UTF8, "application/json");
 
-                services.AddScoped<IImageOcrProcessor>(provider => new ImageOcrProcessor(tesseractDataPath));
-                services.AddScoped<OcrProcessor>();
-            })
-            .Build();
+Console.WriteLine(await client.PostAsync("http://localhost:5041/api/ocr", jsonContentPdf));
 
-var ocrProcessor = host.Services.GetRequiredService<OcrProcessor>();
+var jsonContentPng = new StringContent(
+    JsonSerializer.Serialize(new
+    {
+        filename = $"{Guid.NewGuid()}.png",
+        file = Convert.ToBase64String(File.ReadAllBytes(@"C:\temp\Lorem Ipsum.png"))
+    }), Encoding.UTF8, "application/json");
 
-Console.WriteLine(await ocrProcessor.ProcessOcr(@"C:\temp\sample.pdf"));
-Console.WriteLine(await ocrProcessor.ProcessOcr(@"C:\temp\sample2-0.png"));
-Console.WriteLine(await ocrProcessor.ProcessOcr(@"C:\temp\sample2-1.png"));
-Console.WriteLine(await ocrProcessor.ProcessOcr(@"C:\temp\sample2.pdf"));
+Console.WriteLine(await client.PostAsync("http://localhost:5041/api/ocr", jsonContentPng));
 
-await host.RunAsync();
+Console.ReadKey();

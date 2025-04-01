@@ -1,0 +1,13 @@
+@FileOcrApi_HostAddress = http://localhost:5041
+
+###
+
+POST {{FileOcrApi_HostAddress}}/api/ocr
+Content-Type: application/json
+
+{
+  "filename": "sample.pdf",
+  "file": Convert.ToBase64String(File.ReadAllBytes(@"C:\temp\Lorem Ipsum.pdf"))
+}
+
+###
