@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Ocr;
+using System.Text.RegularExpressions;
 
 namespace FileOcrTest
 {
@@ -15,7 +16,8 @@ namespace FileOcrTest
         private readonly Mock<ILogger<OcrController>> logger = new Mock<ILogger<OcrController>>();
         private readonly OcrProcessor ocrProcessor;
         private readonly Mock<IOptions<OcrOptions>> options = new Mock<IOptions<OcrOptions>>();
-        private readonly string ExpectedLoremIpsumPdfText;
+        private readonly string expectedLoremIpsumPdfText;
+        private readonly string expectedLoremIpsumPngText;
 
         public OcrControllerTest()
         {
@@ -30,7 +32,8 @@ namespace FileOcrTest
             ocrProcessor = new OcrProcessor(new PdfOcrProcessor(options.Object),
                 new ImageOcrProcessor(options.Object));
 
-            ExpectedLoremIpsumPdfText = File.ReadAllText(@"Pdf/Lorem Ipsum.pdf.txt");
+            expectedLoremIpsumPdfText = File.ReadAllText(@"Pdf/Lorem Ipsum.pdf.txt");
+            expectedLoremIpsumPngText = File.ReadAllText(@"Png/Lorem Ipsum.png.txt");
         }
 
         [TestMethod]
@@ -70,7 +73,7 @@ namespace FileOcrTest
             if (result is OkObjectResult okResult)
             {
                 Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
-                Assert.AreEqual(ExpectedLoremIpsumPdfText, okResult.Value);
+                Assert.AreEqual(expectedLoremIpsumPdfText, okResult.Value);
             }
             else
             {
@@ -108,7 +111,7 @@ namespace FileOcrTest
             var request = new OcrRequest
             {
                 Filename = "Lorem Ipsum.png",
-                File = await File.ReadAllBytesAsync(@"Pdf/Lorem Ipsum.png")
+                File = await File.ReadAllBytesAsync(@"Png/Lorem Ipsum.png")
             };
 
             var result = await controller.Process(request);
@@ -116,7 +119,7 @@ namespace FileOcrTest
             if (result is OkObjectResult okResult)
             {
                 Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
-                Assert.AreEqual(ExpectedLoremIpsumPdfText, okResult.Value);
+                Assert.AreEqual(expectedLoremIpsumPngText, okResult.Value);
             }
             else
             {

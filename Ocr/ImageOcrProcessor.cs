@@ -44,7 +44,7 @@ namespace Ocr
                     FileUtility.TryDelete(txtPath);
 
                     var ocrContent = page.GetText();
-                    File.WriteAllText(txtPath, ocrContent);
+                    FileUtility.WriteToText(txtPath, ocrContent);
 
                     return ocrContent;
                 }
