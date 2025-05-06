@@ -3,7 +3,10 @@ using Tesseract;
 
 namespace Ocr
 {
-    public class ImageOcrProcessor : IOcr
+    public interface IImageOcrProcessor : IOcr
+    { }
+
+    public class ImageOcrProcessor : IImageOcrProcessor
     {
         public string TesseractDataPath { get; set; }
         public string WorkingDirectory { get; set; }

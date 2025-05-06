@@ -4,7 +4,10 @@ using Tesseract;
 
 namespace Ocr
 {
-    public class PdfOcrProcessor : IOcr
+    public interface IPdfOcrProcessor : IOcr
+    { }
+
+    public class PdfOcrProcessor : IPdfOcrProcessor
     {
         public string TesseractDataPath { get; set; }
 

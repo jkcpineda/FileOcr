@@ -6,7 +6,7 @@ namespace Ocr
         private readonly IOcr pdfOcrProcessor;
         private readonly IOcr imageOcrProcessor;
 
-        public OcrProcessor(PdfOcrProcessor pdfOcrProcessor, ImageOcrProcessor imageOcrProcessor)
+        public OcrProcessor(IPdfOcrProcessor pdfOcrProcessor, IImageOcrProcessor imageOcrProcessor)
         {
             this.pdfOcrProcessor = pdfOcrProcessor;
             this.imageOcrProcessor = imageOcrProcessor;

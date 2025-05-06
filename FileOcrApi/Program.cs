@@ -12,8 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<OcrOptions>(builder.Configuration.GetSection(OcrOptions.Ocr));
 
 //Configure dependency injection
-builder.Services.AddScoped<PdfOcrProcessor>();
-builder.Services.AddScoped<ImageOcrProcessor>();
+builder.Services.AddScoped<IPdfOcrProcessor, PdfOcrProcessor>();
+builder.Services.AddScoped<IImageOcrProcessor, ImageOcrProcessor>();
 builder.Services.AddScoped<OcrProcessor>();
 
 builder.Logging.AddSimpleConsole(i => i.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled);
